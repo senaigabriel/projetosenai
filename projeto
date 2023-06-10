@@ -1,269 +1,166 @@
-// include the library code: 
-
-#include "Adafruit_LiquidCrystal.h" 
-
-// Connect via i2c, default address #0 (A0-A2 not jumpered) 
-
-Adafruit_LiquidCrystal lcd(0); 
- 
-
-#define A 6 // mini solenoide 1 
-
-#define B 7 // mini solenoide 2 
-
-#define C 2 // mini solenoide 3 
-
-#define D 3 // mini solenoide 4 
- 
-
-#define buttonPin 4 
-
-int buttonState=0; 
-
-#define buttonClear 5 
-
-int buttonStateA=0; 
- 
-
-int delayOne=20000; // Tempo de acionamento das solenoides 
-
-int delayTwo=500; // Tempo de espera até acionar a próxima solenoide 
- 
-
-int limiteDisparo = 600; //Sensibilidade dos  
-
-// Configuração dos snsores LDR 
-
-int sensorE = A0; //"fotoresistor (LDR) E"conectado ao pino anaógico 0 
-
-int sensorF = A1; //"fotoresistor (LDR) E"conectado ao pino anaógico 1 
-
-int sensorG = A2; //"fotoresistor (LDR) E"conectado ao pino anaógico 2 
-
-int sensorH = A3; //"fotoresistor (LDR) E"conectado ao pino anaógico 3 
- 
-
-int sensorValueE = 0; //Armazena o valor de A0 
-
-int sensorValueF = 0; //Armazena o valor de A1 
-
-int sensorValueG = 0; //Armazena o valor de A2 
-
-int sensorValueH = 0; //Armazena o valor de A3 
-
- 
-void setup() 
-
-{ 
-
-  Serial.begin(9600); //Iniciar a comunicaçãoo seria com 9600 bits 
-
-   
-    // while(!Serial); 
-
-  Serial.println("LCD Character Backpack I2C Test."); 
-
-    // set up the LCD's number of rows and columns: 
-
-  if (!lcd.begin(16, 2)) 
-
-  { 
-
-    Serial.println("Could not init backpack. Check wiring."); 
-
-    while(1); 
-
-  } 
-   
-
-  Serial.println("Backpack init'd."); 
-   
-
-  pinMode(A, OUTPUT); //pin A configurado como saída (solenoide1) 
-
-  pinMode(B, OUTPUT); //pin B configurado como saída (solenoide2) 
-
-  pinMode(C, OUTPUT); //pin C configurado como saída (solenoide3) 
-
-  pinMode(D, OUTPUT); //pin D configurado como saída (solenoide4) 
-
-  pinMode(buttonPin, INPUT);    
-
-  pinMode(sensorE, INPUT); //Define o fotoresistor E como uma entrada 
-
-  pinMode(sensorF, INPUT); //Define o fotoresistor F como uma entrada 
-
-  pinMode(sensorG, INPUT); //Define o fotoresistor G como uma entrada 
-
-  pinMode(sensorH, INPUT); //Define o fotoresistor H como uma entrada 
-
-   
-} 
-
-void loop() 
-
-{ 
-
-buttonState=digitalRead(buttonPin); 
-
-Serial.println(buttonState); 
-
-buttonStateA=digitalRead(buttonClear);  
-   
-    if(buttonStateA==HIGH) 
-
-  { 
-
-    lcd.clear(); 
-
-  } 
-   
-sensorValueE = analogRead(sensorE); //lê o valor atual do sensor E 
-
-sensorValueF = analogRead(sensorF); //lê o valor atual do sensor F 
-
-sensorValueG = analogRead(sensorG); //lê o valor atual do sensor G 
-
-sensorValueH = analogRead(sensorH); //lê o valor atual do sensor H  
-
- 
-
-    // set the cursor to column 0, line 1 
-
-  // (note: line 1 is the second row, since counting begins with 0): 
-
-  lcd.setCursor(0, 0); 
-
-    // Print a message to the LCD. 
-
-  lcd.print(" PRECIONE START"); 
-
-   
-
-  if(sensorValueE > limiteDisparo) 
-
-  { 
-
-    // set the cursor to column 0, line 1 
-
-  // (note: line 1 is the second row, since counting begins with 0): 
-
-  lcd.setCursor(0, 1); 
-
-    // Print a message to the LCD. 
-
-  lcd.print("1"); 
-
-  } 
-   
-  if(sensorValueF > limiteDisparo) 
-
-  { 
-
-    // set the cursor to column 0, line 1 
-
-  // (note: line 1 is the second row, since counting begins with 0): 
-
-  lcd.setCursor(2, 1); 
-
-    // Print a message to the LCD. 
-
-  lcd.print("2"); 
-
-  } 
-
-  if(sensorValueG > limiteDisparo) 
-
-  { 
-
-    // set the cursor to column 0, line 1 
-
-  // (note: line 1 is the second row, since counting begins with 0): 
-
-  lcd.setCursor(4, 1); 
-
-    // Print a message to the LCD. 
-
-  lcd.print("3"); 
-
-  } 
-
-    if(sensorValueH > limiteDisparo) 
-
-  { 
-
-    // set the cursor to column 0, line 1 
-
-  // (note: line 1 is the second row, since counting begins with 0): 
-
-  lcd.setCursor(6, 1); 
-
-    // Print a message to the LCD. 
-
-  lcd.print("4"); 
-
-  } 
-
-   
-  if(buttonState==HIGH)//Se botão estiver em nível alto (HIGH) 
-
-    //Executar linhas abaixo 
-
-  { 
-
-     lcd.clear(); 
-
-     
-  digitalWrite(A, HIGH); //Aciona solenoide 1 
-
-  delay(delayOne); //Tempo de acionamento solenoide 1 
-
-  digitalWrite(A, LOW); //desaciona solenoide 1 
-
-  delay(delayTwo); //Tempo de espera até acionar solenoide 2 
-   
-
-  digitalWrite(B, HIGH); //Aciona solenoide 2 
-
-  delay(delayOne); //Tempo de acionamento solenoide 2 
-
-  digitalWrite(B,LOW); //desaciona solenoide 2 
-
-  delay(delayTwo); //Tempo de espera até acionar solenoide 3 
-
-     
-  digitalWrite(C, HIGH); //Aciona solenoide 3 
-
-  delay(delayOne); //Tempo de acionamento solenoide 3 
-
-  digitalWrite(C,LOW); //desaciona solenoide 3 
-
-  delay(delayTwo); //Tempo de espera até acionar solenoide 4 
+#include <Wire.h> // Biblioteca utilizada para fazer a comunicação com o I2C
+#include <LiquidCrystal_I2C.h> // Biblioteca utilizada para fazer a comunicação com o display 20x4 
+
+#define col 16 // Serve para definir o numero de colunas do display utilizado
+#define lin  2 // Serve para definir o numero de linhas do display utilizado
+#define ende  0x27 // Serve para definir o endereço do display.
+
+LiquidCrystal_I2C lcd(ende,col,lin); // Chamada da funcação LiquidCrystal para ser usada com o I2C
+
+#define A 6 // mini solenoide 1
+#define B 7 // mini solenoide 2
+#define C 2 // mini solenoide 3
+#define D 3 // mini solenoide 4
+
+#define led 5 //TESTAR LDR
+
+#define buttonPin 4
+int buttonState=0;
+#define buttonClear 5
+int buttonStateA=0;
+
+int delayOne=1500; // Tempo de acionamento das solenoides
+int delayTwo=100; // Tempo de espera até acionar a próxima solenoide
+
+int limiteDisparo = 600; //Sensibilidade dos 
+
+
+
+// Configuração dos snsores LDR
+int sensorE = A0; //"fotoresistor (LDR) E"conectado ao pino anaógico 0
+int sensorF = A1; //"fotoresistor (LDR) E"conectado ao pino anaógico 1
+int sensorG = A2; //"fotoresistor (LDR) E"conectado ao pino anaógico 2
+int sensorH = A3; //"fotoresistor (LDR) E"conectado ao pino anaógico 3
+
+int sensorValueE = 0; //Armazena o valor de A0
+int sensorValueF = 0; //Armazena o valor de A1
+int sensorValueG = 0; //Armazena o valor de A2
+int sensorValueH = 0; //Armazena o valor de A3
+
+void setup()
+{
+  
+  Serial.begin(9600); //Iniciar a comunicaçãoo seria com 9600 bits
+  
+    lcd.init(); // Serve para iniciar a comunicação com o display já conectado
+  lcd.backlight(); // Serve para ligar a luz do display
+  lcd.clear(); // Serve para limpar a tela do display
+  
+  pinMode(A, OUTPUT); //pin A configurado como saída (solenoide1)
+  pinMode(B, OUTPUT); //pin B configurado como saída (solenoide2)
+  pinMode(C, OUTPUT); //pin C configurado como saída (solenoide3)
+  pinMode(D, OUTPUT); //pin D configurado como saída (solenoide4)
+  
+  pinMode(buttonPin, INPUT);
+  
+  pinMode(sensorE, INPUT); //Define o fotoresistor E como uma entrada
+  pinMode(sensorF, INPUT); //Define o fotoresistor F como uma entrada
+  pinMode(sensorG, INPUT); //Define o fotoresistor G como uma entrada
+  pinMode(sensorH, INPUT); //Define o fotoresistor H como uma entrada
+  
+  pinMode(led, OUTPUT); //TESTAR LDR
+}
+void loop()
+{
+  
+
+buttonState=digitalRead(buttonPin);
+Serial.println(buttonState);
+buttonStateA=digitalRead(buttonClear); 
+
+  
+sensorValueE = analogRead(sensorE); //lê o valor atual do sensor E
+sensorValueF = analogRead(sensorF); //lê o valor atual do sensor F
+sensorValueG = analogRead(sensorG); //lê o valor atual do sensor G
+sensorValueH = analogRead(sensorH); //lê o valor atual do sensor H 
+
+  
+   // set the cursor to column 0, line 1
+  // (note: line 1 is the second row, since counting begins with 0):
+  lcd.setCursor(0, 0);
+    // Print a message to the LCD.
+  lcd.print(" Iniciar Teste");
+  
+  lcd.setCursor(1, 1);
+    // Print a message to the LCD.
+  lcd.print("- - - -");
+
+  
+  
+  if(sensorValueE > limiteDisparo)
+  {
+    // set the cursor to column 0, line 1
+  // (note: line 1 is the second row, since counting begins with 0):
+  lcd.setCursor(0, 1);
+    // Print a message to the LCD.
+  lcd.print("1");
+  }
+  if(sensorValueF > limiteDisparo)
+  {
+    // set the cursor to column 0, line 1
+  // (note: line 1 is the second row, since counting begins with 0):
+  lcd.setCursor(2, 1);
+    // Print a message to the LCD.
+  lcd.print("2");
+  }
+if(sensorValueG > limiteDisparo)
+  {
+    // set the cursor to column 0, line 1
+  // (note: line 1 is the second row, since counting begins with 0):
+  lcd.setCursor(4, 1);
+    // Print a message to the LCD.
+  lcd.print("3");
+  }
+if(sensorValueH > limiteDisparo)
+  {
+    // set the cursor to column 0, line 1
+  // (note: line 1 is the second row, since counting begins with 0):
+  lcd.setCursor(6, 1);
+    // Print a message to the LCD.
+  lcd.print("4");
+  }
+  
+  if(buttonState==HIGH)//Se botão estiver em nível alto (HIGH)
+    //Executar linhas abaixo
+  {
+  digitalWrite(A, HIGH); //Aciona solenoide 1
+  delay(delayOne); //Tempo de acionamento solenoide 1
+  digitalWrite(A, LOW); //desaciona solenoide 1
+  delay(delayTwo); //Tempo de espera até acionar solenoide 2
     
+  digitalWrite(B, HIGH); //Aciona solenoide 2
+  delay(delayOne); //Tempo de acionamento solenoide 2
+  digitalWrite(B,LOW); //desaciona solenoide 2
+  delay(delayTwo); //Tempo de espera até acionar solenoide 3
+    
+  digitalWrite(C, HIGH); //Aciona solenoide 3
+  delay(delayOne); //Tempo de acionamento solenoide 3
+  digitalWrite(C,LOW); //desaciona solenoide 3
+  delay(delayTwo); //Tempo de espera até acionar solenoide 4
+    
+  digitalWrite(D, HIGH); //Aciona solenoide 4
+  delay(delayOne); //Tempo de acionamento solenoide 4
+  digitalWrite(D,LOW); //desaciona solenoide 4
+  delay(delayTwo); //Tempo de espera até acionar solenoide 1
 
-  digitalWrite(D, HIGH); //Aciona solenoide 4 
+     // set the cursor to column 0, line 1
+  // (note: line 1 is the second row, since counting begins with 0):
+  lcd.setCursor(10, 1);
+    // Print a message to the LCD.
+  lcd.print("Pronto");
+  }
+  
+  else // Caso contrário executar linhas abaixo
+  {
+     digitalWrite(A, LOW); //Solenoide 1 desaciona
+     digitalWrite(B, LOW); //Solenoide 2 desaciona
+     digitalWrite(C, LOW); //Solenoide 3 desaciona
+     digitalWrite(D, LOW); //Solenoide 4 desaciona
+  }
 
-  delay(delayOne); //Tempo de acionamento solenoide 4 
-
-  digitalWrite(D,LOW); //desaciona solenoide 4 
-
-  delay(delayTwo); //Tempo de espera até acionar solenoide 1 
-
-  } 
-
-  else // Caso contrário executar linhas abaixo 
-
-  { 
-
-     digitalWrite(A, LOW); //Solenoide 1 desaciona 
-
-     digitalWrite(B, LOW); //Solenoide 2 desaciona 
-
-     digitalWrite(C, LOW); //Solenoide 3 desaciona 
-
-     digitalWrite(D, LOW); //Solenoide 4 desaciona 
-
-  } 
-} 
-
- 
+  
+  if(buttonStateA==HIGH)
+  {
+    lcd.clear();
+  }
+}
